@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Secrets / local config
+.env
+
+# Generated outputs
+transcript_*.txt
+cues_*.txt
+response_*.txt
+cues_lines_*.txt
