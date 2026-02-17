@@ -6,6 +6,8 @@ from pathlib import Path
 
 from openai import OpenAI
 
+PROMPT_TEMPLATE_PATH = Path(__file__).resolve().parent.parent / "prompts" / "cues_prompt.md"
+
 
 def load_env_file_if_needed(env_path: Path = Path(".env")) -> None:
     if not env_path.exists():
@@ -28,25 +30,10 @@ def load_env_file_if_needed(env_path: Path = Path(".env")) -> None:
 
 
 def build_prompt(transcript_text: str) -> str:
-    template = '''Te pasaré una transcripción y quiero que me des los tiempos de las **secciones**:
-- Bienvenida
-- Alabanza
-- Avisos (puede ir antes o despues de Testimonios)
-- Testimonios (son testimonios de lo que ha hecho Dios en la vida de la gente y le da gracias a Dios)
-- Mensaje 
-  - tiempos de ideas clave (pon un título a cada idea clave)
-- Ministración (tiempo de oración)
-- Cumpleaños
-- Despedida 
-
-**Formato de salida obligatorio**.
-Responde en JSON con estructura `{"cues": ["HH:MM:SS Titulo de CUE", "..."]}`.
-
-
-"""
-<TRANSCRIPCION>
-"""
-'''
+    try:
+        template = PROMPT_TEMPLATE_PATH.read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        raise ValueError(f"No se encontro el template de prompt: {PROMPT_TEMPLATE_PATH}") from exc
     return template.replace("<TRANSCRIPCION>", transcript_text)
 
 

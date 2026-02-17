@@ -72,6 +72,16 @@ Salida:
 - El script de CUEs fuerza respuesta estructurada vía `response_format` + `json_schema`.
 - Si el video no tiene subtítulos disponibles, la descarga de transcript fallará.
 
+## Prompt configurable
+
+El prompt de extracción de CUEs está en:
+
+- `prompts/cues_prompt.md`
+
+El script reemplaza el placeholder `<TRANSCRIPCION>` por el contenido real de la transcripción.
+
+Si quieres ajustar categorías, estilo de títulos o reglas, edita ese archivo sin tocar el código Python.
+
 ## 3) Comando unificado (YouTube -> CUEs)
 
 Genera CUEs directamente desde URL o `video_id` sin archivos intermedios por defecto.
