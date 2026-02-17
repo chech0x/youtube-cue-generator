@@ -1,6 +1,6 @@
 # youtube-cue-generator
 
-![youtube-cue-generator banner](images/banner.png)
+![youtube-cue-generator banner](https://raw.githubusercontent.com/chech0x/youtube-cue-generator/main/images/banner.png)
 
 Scripts para:
 - descargar transcripciones de YouTube
