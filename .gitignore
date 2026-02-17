@@ -17,3 +17,6 @@ transcript_*.txt
 cues_*.txt
 response_*.txt
 cues_lines_*.txt
+
+
+.vscode
