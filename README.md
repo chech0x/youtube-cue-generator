@@ -1,4 +1,6 @@
-# YouTube Cues Generator
+# youtube-cue-generator
+
+![youtube-cue-generator banner](images/banner.png)
 
 Scripts para:
 - descargar transcripciones de YouTube
