@@ -1,5 +1,4 @@
 import argparse
-import json
 import os
 import sys
 import tempfile
@@ -14,7 +13,7 @@ from download_youtube_transcript import fetch_transcript
 from download_youtube_transcript import format_with_start_time_only
 from download_youtube_transcript import parse_languages
 from generate_cues_from_transcript import build_prompt
-from generate_cues_from_transcript import call_openrouter
+from generate_cues_from_transcript import generate_cues_with_retry
 from generate_cues_from_transcript import load_env_file_if_needed
 
 
@@ -45,15 +44,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def cues_json_to_lines(cues_json: str) -> str:
-    payload = json.loads(cues_json)
-    cues = payload.get("cues")
-    if not isinstance(cues, list):
-        raise ValueError("La respuesta JSON no contiene una lista en 'cues'.")
-    lines = [str(item).strip() for item in cues if str(item).strip()]
-    return "\n".join(lines)
-
-
 def main() -> int:
     args = parse_args()
     load_env_file_if_needed()
@@ -73,8 +63,9 @@ def main() -> int:
         segments = fetch_transcript(video_id, languages)
         transcript_ti = format_with_start_time_only(segments)
         prompt = build_prompt(transcript_ti)
-        cues_json = call_openrouter(model_name, api_key, prompt)
-        cues_lines = cues_json_to_lines(cues_json)
+        cues_json, cues_lines, used_tokens, finish_reason, retried, used_effort = generate_cues_with_retry(
+            model_name, api_key, prompt
+        )
 
         if args.save_temp:
             temp_dir = Path(tempfile.mkdtemp(prefix="youtube-cues-"))
@@ -100,6 +91,16 @@ def main() -> int:
     except Exception as exc:
         print(f"[ERROR] Fallo inesperado: {exc}", file=sys.stderr)
         return 99
+
+    print(
+        (
+            f"[INFO] CUEs finish_reason: {finish_reason} "
+            f"(max_output_tokens usado: {used_tokens}, reasoning.effort: {used_effort})"
+        ),
+        file=sys.stderr,
+    )
+    if retried:
+        print("[INFO] CUEs reintentados por salida truncada.", file=sys.stderr)
 
     if args.json:
         print(cues_json)

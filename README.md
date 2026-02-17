@@ -56,6 +56,12 @@ Formato inicial `HH:MM:SS|texto` (recomendado para CUEs):
 uv run src/download_youtube_transcript.py "VIDEO_ID" -ti -o transcript_ti.txt
 ```
 
+Tambien soporta URLs tipo live:
+
+```bash
+uv run src/download_youtube_transcript.py "https://www.youtube.com/live/VIDEO_ID"
+```
+
 ## 2) Generar CUEs con OpenRouter
 
 ```bash
@@ -98,6 +104,12 @@ Con `video_id`:
 uv run src/generate_cues_from_youtube.py "VIDEO_ID"
 ```
 
+Con URL live:
+
+```bash
+uv run src/generate_cues_from_youtube.py "https://www.youtube.com/live/VIDEO_ID"
+```
+
 Con idiomas:
 
 ```bash
@@ -114,4 +126,87 @@ Guardar artefactos en carpeta temporal (`/tmp`):
 
 ```bash
 uv run src/generate_cues_from_youtube.py "VIDEO_ID" --save-temp
+```
+
+Debug raw (respuesta cruda del modelo):
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID" --show-raw
+```
+
+## 4) Resumen del Mensaje (con emojis)
+
+Toma el bloque entre `Mensaje` y antes de `Ministración` usando tiempos detectados en `cues_lines_*.txt`, y arma un resumen en puntos con emojis.
+Al modelo de resumen se le pasa el **texto completo del rango** (no solo los tiempos).
+Si no aparece un cue explícito de `Ministración`, el script usa fallback automático:
+1) la primera sección posterior detectada (`Oración`, `Cumpleaños`, `Despedida`, etc.), o
+2) fin del transcript si no hay una sección posterior clara.
+
+Directo con URL o `video_id`:
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "https://www.youtube.com/watch?v=VIDEO_ID"
+```
+
+o:
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID"
+```
+
+Tambien soporta URL live:
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "https://www.youtube.com/live/VIDEO_ID"
+```
+
+Con idiomas:
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID" -l "es,en"
+```
+
+Salida JSON:
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID" --json
+```
+
+Resumen con mas tokens (default ya es 6000, puedes subirlo si hace falta):
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID" --max-output-tokens 8000
+```
+
+Guardar artefactos temporales (`/tmp`):
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID" --save-temp
+```
+
+Ver respuesta cruda del modelo (cues + resumen):
+
+```bash
+uv run src/generate_message_summary_from_youtube.py "VIDEO_ID" --show-raw
+```
+
+Tambien puedes correrlo desde archivos ya generados:
+
+```bash
+uv run src/generate_message_summary.py transcript_ti.txt cues_lines_transcript_ti.txt
+```
+
+Salida:
+- `summary_<archivo>.txt` (puntos del mensaje, uno por línea)
+- `summary_response_<archivo>.txt` (respuesta JSON completa)
+
+Logs utiles en stderr:
+- `finish_reason` de CUEs y de Resumen.
+- `reasoning.effort` usado en cada etapa.
+- aviso de reintento automatico cuando hay salida truncada (`length`).
+
+Opcional: cambiar etiquetas de inicio/fin:
+
+```bash
+uv run src/generate_message_summary.py transcript_ti.txt cues_lines_transcript_ti.txt --start-label mensaje --end-label ministracion
 ```

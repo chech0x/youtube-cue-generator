@@ -22,6 +22,7 @@ def extract_video_id(value: str) -> str:
     patterns = [
         r"(?:v=)([a-zA-Z0-9_-]{11})",
         r"(?:youtu\.be/)([a-zA-Z0-9_-]{11})",
+        r"(?:youtube\.com/live/)([a-zA-Z0-9_-]{11})",
         r"(?:youtube\.com/shorts/)([a-zA-Z0-9_-]{11})",
         r"(?:youtube\.com/embed/)([a-zA-Z0-9_-]{11})",
     ]

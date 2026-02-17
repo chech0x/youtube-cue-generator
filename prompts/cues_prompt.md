@@ -11,6 +11,12 @@ Te pasaré una transcripción y quiero que me des los tiempos de las **secciones
 
 **Formato de salida obligatorio**.
 Responde en JSON con estructura `{"cues": ["HH:MM:SS Titulo de CUE", "..."]}`.
+No incluyas markdown, explicaciones ni texto fuera del JSON.
+
+JSON Schema:
+```json
+<CUES_JSON_SCHEMA>
+```
 
 """
 <TRANSCRIPCION>
